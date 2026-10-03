@@ -31,11 +31,10 @@ class TutorPython:
 				respuesta_estudiante = input(contenido["pregunta"] + " ")
 				if contenido["tipo"] == "numero":
 					try:
-						respuesta_estudiante = int(respuesta_estudiante)
-						respuesta_correcta = int(contenido["respuesta"])
-						correcta = respuesta_estudiante == respuesta_correcta
+						respuesta_numero = int(respuesta_estudiante)
 					except ValueError:
-						correcta = False
+						return "Necesito que respondas con un número. Intenta de nuevo más tarde."
+					correcta = respuesta_numero == int(contenido["respuesta"])
 				else:
 					correcta = (
 						respuesta_estudiante.strip().lower()
