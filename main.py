@@ -3,12 +3,19 @@ class TutorPython:
 		self.historial = []
 		self.temas = {
 			"variable": {
-				"explicacion": "Una variable es un nombre que apunta a un valor guardado en memoria."
+				"explicacion": "Una variable es un nombre que apunta a un valor guardado en memoria.",
+				"pregunta": "¿Qué elemento permite guardar o referenciar un valor en Python?",
+				"respuesta": "variable",
+				"tipo": "texto",
 			},
 			"lista": {
-				"explicacion": "Una lista es una coleccion ordenada de elementos, escrita entre corchetes."
+				"explicacion": "Una lista es una coleccion ordenada de elementos, escrita entre corchetes.",
+				"pregunta": "¿En qué posición se encuentra el primer elemento de una lista?",
+				"respuesta": "0",
+				"tipo": "numero",
 			},
 		}
+		self.temas_dominados = {}
 
 	def explicar_concepto(self, mensaje_normalizado):
 		for tema, contenido in self.temas.items():
@@ -17,6 +24,31 @@ class TutorPython:
 
 		temas_disponibles = ", ".join(self.temas.keys())
 		return f"Ese tema no está disponible. Puedo explicar: {temas_disponibles}."
+
+	def hacer_pregunta(self, mensaje_normalizado):
+		for tema, contenido in self.temas.items():
+			if tema in mensaje_normalizado:
+				respuesta_estudiante = input(contenido["pregunta"] + " ")
+				if contenido["tipo"] == "numero":
+					try:
+						respuesta_estudiante = int(respuesta_estudiante)
+						respuesta_correcta = int(contenido["respuesta"])
+						correcta = respuesta_estudiante == respuesta_correcta
+					except ValueError:
+						correcta = False
+				else:
+					correcta = (
+						respuesta_estudiante.strip().lower()
+						== contenido["respuesta"].strip().lower()
+					)
+
+				self.temas_dominados[tema] = correcta
+				if correcta:
+					return "¡Respuesta correcta!"
+				return "Respuesta incorrecta."
+
+		temas_disponibles = ", ".join(self.temas.keys())
+		return f"No encontré ese tema. Puedo hacer preguntas sobre: {temas_disponibles}."
 
 	def responder(self, mensaje):
 		self.historial.append(("estudiante", mensaje))
@@ -27,6 +59,8 @@ class TutorPython:
 			respuesta = "Hola! Soy tu tutor de Python."
 		elif "explica" in mensaje_normalizado or "explicame" in mensaje_normalizado:
 			respuesta = self.explicar_concepto(mensaje_normalizado)
+		elif "pregunta" in mensaje_normalizado or "quiz" in mensaje_normalizado:
+			respuesta = self.hacer_pregunta(mensaje_normalizado)
 		else:
 			respuesta = "Todavia no se responder eso."
 		self.historial.append(("tutor", respuesta))
@@ -34,5 +68,3 @@ class TutorPython:
 
 tutor = TutorPython()
 
-print(tutor.responder("explicame variable"))
-print(tutor.responder("explicame algo que no existe"))
