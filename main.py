@@ -50,6 +50,17 @@ class TutorPython:
 		temas_disponibles = ", ".join(self.temas.keys())
 		return f"No encontré ese tema. Puedo hacer preguntas sobre: {temas_disponibles}."
 
+	def mostrar_progreso(self):
+		preguntas_intentadas = len(self.temas_dominados)
+		if preguntas_intentadas == 0:
+			return "Todavía no has intentado ninguna pregunta."
+
+		respuestas_correctas = sum(self.temas_dominados.values())
+		return (
+			f"Has respondido correctamente {respuestas_correctas} de "
+			f"{preguntas_intentadas} preguntas intentadas."
+		)
+
 	def responder(self, mensaje):
 		self.historial.append(("estudiante", mensaje))
 		mensaje_normalizado = mensaje.lower()
@@ -61,6 +72,8 @@ class TutorPython:
 			respuesta = self.explicar_concepto(mensaje_normalizado)
 		elif "pregunta" in mensaje_normalizado or "quiz" in mensaje_normalizado:
 			respuesta = self.hacer_pregunta(mensaje_normalizado)
+		elif "progreso" in mensaje_normalizado:
+			respuesta = self.mostrar_progreso()
 		else:
 			respuesta = "Todavia no se responder eso."
 		self.historial.append(("tutor", respuesta))
